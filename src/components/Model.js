@@ -1,6 +1,7 @@
 export class Model {
   constructor(url){
     this.data_rows = JSON.parse(http_get(url));
+
     this.selected_index = 1;
     this.range = 10;
     this.start_index = 1;
@@ -13,7 +14,6 @@ export class Model {
     this.ordering = 1;
 
     this.search = "";
-
     this.all_search = [];
 
     this.checked_rows = [];

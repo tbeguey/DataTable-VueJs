@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="column col-3">
-        <button class="btn btn-primary btn-lg btn-success"><i class="icon icon-plus"></i>  AJOUTER UNE LIGNE</button>
+        <a class="btn btn-primary btn-lg btn-success" href="#modal_add_row"><i class="icon icon-plus"></i>  AJOUTER UNE LIGNE</a>
       </div>
       <div class="column col-3">
         <button class="btn btn-primary btn-lg btn-error" @click="model.delete_rows()" ><i class="icon icon-minus"></i>  SUPPRIMER LA SELECTION</button>
@@ -52,6 +52,12 @@
                 <i class="form-icon icon icon-search"></i>
               </div>
             </th>
+            <th>
+              <button class="btn btn-primary btn-action btn-lg btn-error tooltip" data-tooltip="Vider les filtres" @click="clear_filter_columns()">
+                <i class="form-icon icon icon-refresh"></i>
+              </button>
+            </th>
+            <th></th>
           </tr>
           </thead>
           <tbody>
@@ -68,12 +74,12 @@
               {{entry[key]}}
             </td>
             <td>
-              <button class="btn btn-primary btn-action btn-lg btn-success">
+              <button class="btn btn-primary btn-action btn-lg btn-success tooltip" data-tooltip="Editer" @click="">
                 <i class="icon icon-edit"></i>
               </button>
             </td>
             <td>
-              <button class="btn btn-primary btn-action btn-lg btn-error" @click="model.delete_row(model.rows_display.indexOf(entry))">
+              <button class="btn btn-primary btn-action btn-lg btn-error tooltip" data-tooltip="Supprimer" @click="model.delete_row(model.rows_display.indexOf(entry))">
                 <i class="icon icon-delete"></i>
               </button>
             </td>
@@ -91,20 +97,27 @@
       </div>
     </div>
 
-    <div class="modal active" id="modal-id">
+    <div class="modal" id="modal_add_row">
       <a href="#close" class="modal-overlay" aria-label="Close"></a>
       <div class="modal-container">
         <div class="modal-header">
           <a href="#close" class="btn btn-clear float-right" aria-label="Close"></a>
-          <div class="modal-title h5">Modal title</div>
+          <div class="modal-title h5">Ajout d'une ligne</div>
         </div>
         <div class="modal-body">
           <div class="content">
-            <!-- content here -->
+            <div class="form-group">
+              <div v-for="key in Object.keys(model.data_rows[0])">
+                <input class="form-input" type="text" :placeholder="key">
+                <br>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          ...
+          <button class="btn btn-primary btn-success">
+            <i class="icon icon-check"></i> VALIDER
+          </button>
         </div>
       </div>
     </div>
@@ -154,6 +167,16 @@
 
       edit_cell : function(id, column) {
         alert(id + " " + column);
+      },
+
+      clear_filter_columns : function() {
+        var search_box = document.getElementsByClassName('filter-column');
+        for(var i = 0; i < search_box.length; i++){
+          var item = search_box[i];
+          item.value = "";
+        }
+        model.all_search = [];
+        model.filter();
       }
 
 
