@@ -13,8 +13,14 @@
         </div>
       </div>
       <div class="column col-3">
+        <button class="btn btn-primary btn-lg btn-success"><i class="icon icon-plus"></i>  AJOUTER UNE LIGNE</button>
+      </div>
+      <div class="column col-3">
+        <button class="btn btn-primary btn-lg btn-error"><i class="icon icon-minus"></i>  SUPPRIMER LA SELECTION</button>
+      </div>
+      <div class="column col-4 col-mx-auto">
         <div class="has-icon-left">
-          <input type="text" class="form-input" placeholder="Filtrer par texte" @change="model.filter()" v-model="model.search">
+          <input type="text" class="form-input" placeholder="Filtrer par mots-clefs" @change="model.filter()" v-model="model.search">
           <i class="form-icon icon icon-search"></i>
         </div>
       </div>
@@ -35,7 +41,17 @@
             <th v-for="key in Object.keys(model.data_rows[0])" @click="model.sort(key)">
               {{key}}
             </th>
-
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
+            <th></th>
+            <th v-for="key in Object.keys(model.data_rows[0])">
+              <div class="has-icon-left">
+                <input type="text" class="form-input filter-column" placeholder="Filtrer" @change="filter_column()" :name="key">
+                <i class="form-icon icon icon-search"></i>
+              </div>
+            </th>
           </tr>
           </thead>
           <tbody>
@@ -64,6 +80,7 @@
           </tr>
           </tbody>
         </table>
+        <p id="no-data" v-if="model.rows_display.length == 0"> <b> Aucune donnée disponible </b> </p>
 
         <span> <b>{{model.start_index}}</b> à <b>{{model.end_index}}</b> sur <b>{{model.data_rows.length}}</b> éléments.</span>
         <ul class="pagination">
@@ -94,11 +111,24 @@
         for(var i = 0; i < all_checkbox.length; i++){
           var item = all_checkbox[i];
 
-          if(document.getElementById('select_all_box').checked == true)
+          if(document.getElementById('select_all_box').checked === true)
             item.checked = true;
           else
             item.checked = false;
         }
+      },
+      filter_column : function() {
+        var all_search = [];
+
+        var search_box = document.getElementsByClassName('filter-column');
+        for(var i = 0; i < search_box.length; i++){
+          var item = search_box[i];
+          if(item.value !== "")
+            all_search.push({column : item.name, search : item.value});
+        }
+
+        model.all_search = all_search;
+        model.filter();
       }
     }
   }
@@ -113,5 +143,9 @@
 
   th {
     cursor: pointer;
+  }
+
+  #no-data {
+    text-align: center;
   }
 </style>
