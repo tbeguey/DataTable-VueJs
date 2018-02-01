@@ -15,6 +15,8 @@ export class Model {
     this.search = "";
 
     this.all_search = [];
+
+    this.checked_rows = [];
   }
 
   update(){
@@ -66,15 +68,39 @@ export class Model {
 
     this.rows_filtered = this.rows_filtered.filter(
       function(value){
-        var find = false;
+        var find = true;
 
+        _this.all_search.forEach(function(element){
+          if(find === true){
+            if(value[element["column"]]){
+              if(String(value[element["column"]]).indexOf(element["search"]) === -1)
+                find = false;
+            }
+            else
+              find = false;
+          }
 
+        });
 
         return find;
       }
     );
 
     this.rows_display = this.rows_filtered.slice(this.start_index - 1, this.end_index);
+  }
+
+  delete_row(id){
+    this.data_rows.splice(id, 1);
+    this.checked_rows.splice(this.checked_rows.indexOf(id), 1);
+    this.filter();
+  }
+
+  delete_rows(){
+    this.checked_rows_copy = this.checked_rows.slice();
+    for(var i=0; i < this.checked_rows_copy.length; i++){
+      var item = this.checked_rows_copy[i];
+      this.delete_row(item);
+    }
   }
 
 }

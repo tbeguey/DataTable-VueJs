@@ -16,7 +16,7 @@
         <button class="btn btn-primary btn-lg btn-success"><i class="icon icon-plus"></i>  AJOUTER UNE LIGNE</button>
       </div>
       <div class="column col-3">
-        <button class="btn btn-primary btn-lg btn-error"><i class="icon icon-minus"></i>  SUPPRIMER LA SELECTION</button>
+        <button class="btn btn-primary btn-lg btn-error" @click="model.delete_rows()" ><i class="icon icon-minus"></i>  SUPPRIMER LA SELECTION</button>
       </div>
       <div class="column col-4 col-mx-auto">
         <div class="has-icon-left">
@@ -59,12 +59,12 @@
             <td>
               <div class="form-group">
                 <label class="form-checkbox">
-                  <input class="select_checkbox" type="checkbox">
+                  <input class="select_checkbox" type="checkbox" v-model="model.checked_rows" :value="model.rows_display.indexOf(entry)">
                   <i class="form-icon"></i>
                 </label>
               </div>
             </td>
-            <td v-for="key in Object.keys(model.rows_display[0])">
+            <td v-for="key in Object.keys(model.rows_display[0])" @dblclick="edit_cell(model.rows_display.indexOf(entry), key)">
               {{entry[key]}}
             </td>
             <td>
@@ -73,14 +73,14 @@
               </button>
             </td>
             <td>
-              <button class="btn btn-primary btn-action btn-lg btn-error">
+              <button class="btn btn-primary btn-action btn-lg btn-error" @click="model.delete_row(model.rows_display.indexOf(entry))">
                 <i class="icon icon-delete"></i>
               </button>
             </td>
           </tr>
           </tbody>
         </table>
-        <p id="no-data" v-if="model.rows_display.length == 0"> <b> Aucune donnée disponible </b> </p>
+        <p id="no-data" v-if="model.rows_display.length === 0"> <b> Aucune donnée disponible. </b> </p>
 
         <span> <b>{{model.start_index}}</b> à <b>{{model.end_index}}</b> sur <b>{{model.data_rows.length}}</b> éléments.</span>
         <ul class="pagination">
@@ -117,6 +117,7 @@
             item.checked = false;
         }
       },
+
       filter_column : function() {
         var all_search = [];
 
@@ -129,7 +130,14 @@
 
         model.all_search = all_search;
         model.filter();
+      },
+
+
+      edit_cell : function(id, column) {
+        alert(id + " " + column);
       }
+
+
     }
   }
 
