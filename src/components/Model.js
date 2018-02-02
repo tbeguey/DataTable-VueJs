@@ -7,6 +7,8 @@ export class Model {
     this.start_index = 1;
     this.end_index = 10;
 
+    this.number_pages = Math.ceil(this.data_rows.length/this.range);
+
     this.rows_display = this.data_rows.slice(0, 10);
     this.rows_filtered = this.data_rows;
 
@@ -17,12 +19,42 @@ export class Model {
     this.all_search = [];
 
     this.checked_rows = [];
+    this.check_all = false;
+
   }
 
   update(){
     this.start_index = this.range * (this.selected_index - 1) + 1;
     this.end_index = this.range * this.selected_index;
     this.rows_display = this.rows_filtered.slice(this.start_index - 1, this.end_index);
+    this.number_pages = Math.ceil(this.data_rows.length/this.range);
+  }
+
+  next_page(){
+    if(this.selected_index < this.number_pages)
+      this.selected_index++;
+    this.update();
+  }
+
+  previous_page(){
+    if(this.selected_index > 1)
+      this.selected_index--;
+    this.update();
+  }
+
+  select_page(n){
+    this.selected_index = n;
+    this.update();
+  }
+
+  first_page(){
+    this.selected_index = 1;
+    this.update()
+  }
+
+  last_page(){
+    this.selected_index = this.number_pages;
+    this.update();
   }
 
   sort(column){
@@ -100,6 +132,20 @@ export class Model {
     for(var i=0; i < this.checked_rows_copy.length; i++){
       var item = this.checked_rows_copy[i];
       this.delete_row(item);
+    }
+    this.check_all = false;
+  }
+
+  select_all(){
+    if(this.check_all === true){
+      for(var i = 0; i < this.rows_display.length; i++){
+        var item_id = this.data_rows.indexOf(this.rows_display[i]);
+        if(!this.checked_rows.includes(item_id))
+          this.checked_rows.push(item_id);
+      }
+    }
+    else{
+      this.checked_rows = [];
     }
   }
 

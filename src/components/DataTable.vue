@@ -33,7 +33,7 @@
             <th>
               <div class="form-group">
                 <label class="form-checkbox">
-                  <input type="checkbox" id="select_all_box" @change="select_all()">
+                  <input type="checkbox" id="select_all_box" v-model="model.check_all" @change="model.select_all()">
                   <i class="form-icon"></i>
                 </label>
               </div>
@@ -65,13 +65,13 @@
             <td>
               <div class="form-group">
                 <label class="form-checkbox">
-                  <input class="select_checkbox" type="checkbox" v-model="model.checked_rows" :value="model.rows_display.indexOf(entry)">
+                  <input class="select_checkbox" type="checkbox" v-model="model.checked_rows" :value="model.data_rows.indexOf(entry)">
                   <i class="form-icon"></i>
                 </label>
               </div>
             </td>
-            <td v-for="key in Object.keys(model.rows_display[0])" @dblclick="edit_cell(model.rows_display.indexOf(entry), key)">
-              {{entry[key]}}
+            <td v-for="key in Object.keys(model.rows_display[0])" @dblclick="edit_cell(model.data_rows.indexOf(entry), key)">
+              <span>{{entry[key]}}</span>
             </td>
             <td>
               <button class="btn btn-primary btn-action btn-lg btn-success tooltip" data-tooltip="Editer" @click="">
@@ -79,7 +79,7 @@
               </button>
             </td>
             <td>
-              <button class="btn btn-primary btn-action btn-lg btn-error tooltip" data-tooltip="Supprimer" @click="model.delete_row(model.rows_display.indexOf(entry))">
+              <button class="btn btn-primary btn-action btn-lg btn-error tooltip" data-tooltip="Supprimer" @click="model.delete_row(model.data_rows.indexOf(entry))">
                 <i class="icon icon-delete"></i>
               </button>
             </td>
@@ -90,8 +90,20 @@
 
         <span> <b>{{model.start_index}}</b> à <b>{{model.end_index}}</b> sur <b>{{model.data_rows.length}}</b> éléments.</span>
         <ul class="pagination">
-          <li class="page-item active">
-            <a href="#">1</a>
+          <li class="page_item">
+            <a class="page_btn" @click="model.first_page()"><<</a>
+          </li>
+          <li class="page_item">
+            <a class="page_btn" @click="model.previous_page()"><</a>
+          </li>
+          <li v-for="n in model.number_pages" class="page-item" v-bind:class="{'active' : model.selected_index === n}" @click="model.select_page(n)" v-if="n <= model.selected_index + 2 && n >= model.selected_index - 2">
+            <a href="#">{{n}}</a>
+          </li>
+          <li class="page_item">
+            <a class="page_btn" @click="model.next_page()">></a>
+          </li>
+          <li class="page_item">
+            <a class="page_btn" @click="model.last_page()">>></a>
           </li>
         </ul>
       </div>
@@ -138,18 +150,6 @@
     },
 
     methods : {
-      select_all : function() {
-        var all_checkbox = document.getElementsByClassName('select_checkbox');
-        for(var i = 0; i < all_checkbox.length; i++){
-          var item = all_checkbox[i];
-
-          if(document.getElementById('select_all_box').checked === true)
-            item.checked = true;
-          else
-            item.checked = false;
-        }
-      },
-
       filter_column : function() {
         var all_search = [];
 
@@ -178,8 +178,6 @@
         model.all_search = [];
         model.filter();
       }
-
-
     }
   }
 
@@ -195,7 +193,16 @@
     cursor: pointer;
   }
 
+  td > span {
+    cursor :pointer;
+  }
+
   #no-data {
     text-align: center;
+  }
+
+  .page_btn {
+    cursor : pointer;
+    margin: 10px;
   }
 </style>
