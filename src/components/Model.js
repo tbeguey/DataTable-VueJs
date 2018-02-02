@@ -21,6 +21,8 @@ export class Model {
     this.checked_rows = [];
     this.check_all = false;
 
+
+    this.edited_cell = "";
   }
 
   update(){
@@ -147,6 +149,10 @@ export class Model {
     else{
       this.checked_rows = [];
     }
+  }
+
+  edit_cell(id, column){
+    this.edited_cell = String(id) + String(column);
   }
 
 }

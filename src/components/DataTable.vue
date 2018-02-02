@@ -70,16 +70,17 @@
                 </label>
               </div>
             </td>
-            <td v-for="key in Object.keys(model.rows_display[0])" @dblclick="edit_cell(model.data_rows.indexOf(entry), key)">
-              <span>{{entry[key]}}</span>
+            <td v-for="key in Object.keys(model.rows_display[0])" @dblclick="model.edit_cell(model.data_rows.indexOf(entry), key)" >
+              <span v-if="String(model.data_rows.indexOf(entry)) + String(key) !== model.edited_cell">{{entry[key]}}</span>
+              <input type="text" v-model="entry[key]" v-else v-on:keyup.enter="model.edited_cell = ''"/>
             </td>
             <td>
-              <button class="btn btn-primary btn-action btn-lg btn-success tooltip" data-tooltip="Editer" @click="">
+              <button class="btn btn-primary btn-action btn-lg  tooltip" data-tooltip="Editer" @click="">
                 <i class="icon icon-edit"></i>
               </button>
             </td>
             <td>
-              <button class="btn btn-primary btn-action btn-lg btn-error tooltip" data-tooltip="Supprimer" @click="model.delete_row(model.data_rows.indexOf(entry))">
+              <button class="btn btn-primary btn-action btn-lg  tooltip" data-tooltip="Supprimer" @click="model.delete_row(model.data_rows.indexOf(entry))">
                 <i class="icon icon-delete"></i>
               </button>
             </td>
@@ -164,10 +165,6 @@
         model.filter();
       },
 
-
-      edit_cell : function(id, column) {
-        alert(id + " " + column);
-      },
 
       clear_filter_columns : function() {
         var search_box = document.getElementsByClassName('filter-column');
