@@ -23,13 +23,27 @@ export class Model {
 
 
     this.edited_cell = "";
+    this.edited_row = [];
+
+    this.new_row = [];
+
+    this.modal_add_active = false;
+    this.modal_edit_active = false;
+  }
+
+  change_range(){
+    this.selected_index = 1;
+    this.update();
   }
 
   update(){
     this.start_index = this.range * (this.selected_index - 1) + 1;
     this.end_index = this.range * this.selected_index;
+    if(this.end_index > this.rows_filtered.length)
+      this.end_index = this.rows_filtered.length;
+
     this.rows_display = this.rows_filtered.slice(this.start_index - 1, this.end_index);
-    this.number_pages = Math.ceil(this.data_rows.length/this.range);
+    this.number_pages = Math.ceil(this.rows_filtered.length/this.range);
   }
 
   next_page(){
@@ -103,24 +117,24 @@ export class Model {
     this.rows_filtered = this.rows_filtered.filter(
       function(value){
         var find = true;
-
-        _this.all_search.forEach(function(element){
-          if(find === true){
-            if(value[element["column"]]){
-              if(String(value[element["column"]]).indexOf(element["search"]) === -1)
-                find = false;
+        for(var i = 0; i < _this.all_search.length; i++){
+          var item = _this.all_search[i];
+          var element = value[Object.keys(_this.data_rows[0])[i]];
+          if(element !== undefined){
+            if(item !== undefined){
+              if(find === true){
+                if(String(element).indexOf(item) === -1){
+                  find = false;
+                }
+              }
             }
-            else
-              find = false;
           }
-
-        });
+        }
 
         return find;
       }
     );
-
-    this.rows_display = this.rows_filtered.slice(this.start_index - 1, this.end_index);
+    this.update();
   }
 
   delete_row(id){
@@ -131,10 +145,13 @@ export class Model {
 
   delete_rows(){
     this.checked_rows_copy = this.checked_rows.slice();
-    for(var i=0; i < this.checked_rows_copy.length; i++){
+    for(var i = 0; i < this.checked_rows_copy.length; i++){
       var item = this.checked_rows_copy[i];
       this.delete_row(item);
     }
+    if(this.selected_index === this.number_pages)
+      this.previous_page();
+
     this.check_all = false;
   }
 
@@ -153,6 +170,17 @@ export class Model {
 
   edit_cell(id, column){
     this.edited_cell = String(id) + String(column);
+  }
+
+  add_row(){
+    this.data_rows.push(this.new_row);
+    this.modal_add_active = false;
+  }
+
+  edit_row(id){
+    this.edited_row = this.data_rows[id];
+    this.modal_edit_active = true;
+    this.filter();
   }
 
 }
